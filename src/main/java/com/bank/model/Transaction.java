@@ -27,7 +27,7 @@ public class Transaction {
     /*
      * Bank account numbers are exactly 16 digits.
      */
-    private static final int ACCOUNT_NUMBER_LENGTH = 16;
+    private static final int ACCOUNT_NUMBER_LENGTH = 10;
 
     private static final int MAX_DESCRIPTION_LENGTH = 255;
 
