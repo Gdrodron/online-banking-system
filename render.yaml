@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: online-banking-system
+    runtime: docker
+    plan: free
+    region: singapore
+
+    envVars:
+      - key: DB_URL
+        fromDatabase:
+          name: banking-db
+          property: connectionString
+
+      - key: DB_USERNAME
+        fromDatabase:
+          name: banking-db
+          property: user
+
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: banking-db
+          property: password
+
+databases:
+  - name: banking-db
+    plan: free
+    region: singapore

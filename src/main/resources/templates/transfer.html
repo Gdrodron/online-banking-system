@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Transfer | Rodron Bank</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- =========================
+         NAVBAR
+         ========================= -->
+    <div th:replace="~{fragments/navbar :: navbar('transfer')}"></div>
+
+
+    <div class="app-content">
+
+        <!-- =========================
+             TOPBAR
+             ========================= -->
+        <div th:replace="~{fragments/topbar :: topbar('', 'Transfer Money', 'Send money to another bank account.')}"></div>
+
+
+        <!-- =========================
+             MAIN CONTENT
+             ========================= -->
+        <main class="container">
+
+            <div class="card">
+
+                <!-- =========================
+                     SUCCESS MESSAGE
+                     ========================= -->
+                <div
+                    class="alert alert-success"
+                    th:if="${success}"
+                    th:text="${success}">
+                    Transfer successful.
+                </div>
+
+
+                <!-- =========================
+                     ERROR MESSAGE
+                     ========================= -->
+                <div
+                    class="alert alert-error"
+                    th:if="${error}"
+                    th:text="${error}">
+                    Transfer failed.
+                </div>
+
+
+                <!-- =========================
+                     TRANSFER FORM
+                     ========================= -->
+                <form
+                    th:action="@{/transfer}"
+                    method="post"
+                    autocomplete="off">
+
+                    <!-- =========================
+                         CSRF TOKEN
+                         ========================= -->
+                    <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}">
+
+
+                    <!-- =========================
+                         DESTINATION ACCOUNT
+                         ========================= -->
+                    <div class="form-group">
+
+                        <label for="toAccountNumber">
+                            Destination Account Number
+                        </label>
+
+                        <input
+                            id="toAccountNumber"
+                            type="text"
+                            name="toAccountNumber"
+                            required
+                            minlength="16"
+                            maxlength="16"
+                            pattern="[0-9]{16}"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            placeholder="Enter 16-digit account number"
+                            title="Account number must be exactly 16 digits">
+
+                        <small>
+                            Enter the recipient's 16-digit account number.
+                        </small>
+
+                    </div>
+
+
+                    <!-- =========================
+                         TRANSFER AMOUNT
+                         ========================= -->
+                    <div class="form-group">
+
+                        <label for="amount">
+                            Amount
+                        </label>
+
+                        <input
+                            id="amount"
+                            type="number"
+                            name="amount"
+                            required
+                            min="0.01"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="0.00">
+
+                    </div>
+
+
+                    <!-- =========================
+                         DESCRIPTION
+                         ========================= -->
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <input
+                            id="description"
+                            type="text"
+                            name="description"
+                            maxlength="255"
+                            autocomplete="off"
+                            placeholder="Optional">
+
+                    </div>
+
+
+                    <!-- =========================
+                         SUBMIT BUTTON
+                         ========================= -->
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-block">
+                        Transfer Money
+                    </button>
+
+                </form>
+
+
+                <!-- =========================
+                     BACK TO DASHBOARD
+                     ========================= -->
+                <p class="link-alt">
+
+                    <a th:href="@{/dashboard}">
+                        ← Back to Dashboard
+                    </a>
+
+                </p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     ACCOUNT NUMBER VALIDATION
+     ========================= -->
+<script>
+    const accountInput = document.getElementById("toAccountNumber");
+
+    if (accountInput) {
+        accountInput.addEventListener("input", function () {
+
+            // Allow numbers only
+            this.value = this.value.replace(/\D/g, "");
+
+            // Limit to exactly 16 digits maximum
+            if (this.value.length > 16) {
+                this.value = this.value.slice(0, 16);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
+

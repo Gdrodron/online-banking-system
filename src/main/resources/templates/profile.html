@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Rodron Bank</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <div th:replace="~{fragments/navbar :: navbar('profile')}"></div>
+
+    <div class="app-content">
+
+        <div th:replace="~{fragments/topbar :: topbar('', 'Profile', 'View your account holder information.')}"></div>
+
+        <main class="container">
+
+            <div class="card">
+
+                <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px;">
+                    <div class="topbar-user-avatar" style="width:64px; height:64px; flex:0 0 64px; font-size:28px;">👤</div>
+                    <div>
+                        <h2 class="section-title" style="margin:0;" th:text="${user.fullName}">Full Name</h2>
+                        <p class="page-subtitle" style="margin-top:2px;">Customer</p>
+                    </div>
+                </div>
+
+                <div class="summary-row">
+                    <span>Full Name</span>
+                    <strong th:text="${user.fullName}">—</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Username</span>
+                    <strong th:text="${user.username}">—</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Email</span>
+                    <strong th:text="${user.email}">—</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Role</span>
+                    <strong th:text="${user.role != null ? user.role.name() : '—'}">—</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Member Since</span>
+                    <strong th:if="${user.createdAt != null}"
+                            th:text="${#temporals.format(user.createdAt, 'MMMM dd, yyyy')}">—</strong>
+                    <strong th:unless="${user.createdAt != null}">—</strong>
+                </div>
+
+                <p class="link-alt">
+                    <a th:href="@{/dashboard}">← Back to Dashboard</a>
+                </p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+</body>
+</html>
