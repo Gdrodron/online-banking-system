@@ -7,19 +7,13 @@ services:
 
     envVars:
       - key: DB_URL
-        fromDatabase:
-          name: banking-db
-          property: connectionString
+        value: jdbc:postgresql://dpg-d9ucncnlk1mc73eh88jg-a:5432/banking_db_z7rr
 
       - key: DB_USERNAME
-        fromDatabase:
-          name: banking-db
-          property: user
+        value: banking_user
 
       - key: DB_PASSWORD
-        fromDatabase:
-          name: banking-db
-          property: password
+        sync: false
 
 databases:
   - name: banking-db
