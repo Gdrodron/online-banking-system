@@ -20,7 +20,7 @@ public class TransactionService {
 
     private static final int MONEY_SCALE = 2;
     private static final int MAX_DESCRIPTION_LENGTH = 255;
-    private static final int ACCOUNT_NUMBER_LENGTH = 16;
+    private static final int ACCOUNT_NUMBER_LENGTH = 10;
 
     private static final BigDecimal MINIMUM_AMOUNT =
             new BigDecimal("0.01");

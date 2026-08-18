@@ -35,7 +35,7 @@ import jakarta.persistence.UniqueConstraint;
 )
 public class Account {
 
-    private static final int ACCOUNT_NUMBER_LENGTH = 16;
+    private static final int ACCOUNT_NUMBER_LENGTH = 10;
     private static final int MONEY_SCALE = 2;
 
     @Id

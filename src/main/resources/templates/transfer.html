@@ -88,16 +88,16 @@
                             type="text"
                             name="toAccountNumber"
                             required
-                            minlength="16"
-                            maxlength="16"
-                            pattern="[0-9]{16}"
+                            minlength="10"
+                            maxlength="10"
+                            pattern="[0-9]{10}"
                             inputmode="numeric"
                             autocomplete="off"
-                            placeholder="Enter 16-digit account number"
-                            title="Account number must be exactly 16 digits">
+                            placeholder="Enter 10-digit account number"
+                            title="Account number must be exactly 10 digits">
 
                         <small>
-                            Enter the recipient's 16-digit account number.
+                            Enter the recipient's 10-digit account number.
                         </small>
 
                     </div>
@@ -189,9 +189,9 @@
             // Allow numbers only
             this.value = this.value.replace(/\D/g, "");
 
-            // Limit to exactly 16 digits maximum
-            if (this.value.length > 16) {
-                this.value = this.value.slice(0, 16);
+            // Limit to exactly 10 digits
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
             }
         });
     }
@@ -199,4 +199,3 @@
 
 </body>
 </html>
-

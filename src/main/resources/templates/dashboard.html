@@ -199,12 +199,12 @@
                                         and account.accountNumber != null
                                         and !#strings.isEmpty(account.accountNumber)}"
                                     th:text="${#strings.length(account.accountNumber) >= 4
-                                        ? '**** **** **** ' + #strings.substring(
+                                        ? '**** **** ** ' + #strings.substring(
                                             account.accountNumber,
                                             #strings.length(account.accountNumber) - 4
                                         )
                                         : account.accountNumber}">
-                                    **** **** **** 5520
+                                    **** **** 5520
                                 </span>
 
 
@@ -600,13 +600,13 @@
                                 and account.accountNumber != null
                                 and !#strings.isEmpty(account.accountNumber)}"
                             th:text="${#strings.length(account.accountNumber) >= 4
-                                ? '**** **** **** ' +
+                                ? '**** **** ** ' +
                                     #strings.substring(
                                         account.accountNumber,
                                         #strings.length(account.accountNumber) - 4
                                     )
                                 : account.accountNumber}">
-                            **** **** **** 5520
+                            **** **** 5520
                         </div>
 
 
