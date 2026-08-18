@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Transaction History | Rodron Bank</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/navbar :: navbar('history')}"></div>
+
+    <div class="app-content">
+
+        <div th:replace="~{fragments/topbar :: topbar('', 'Transaction History', ${'Account No: ' + account.accountNumber})}"></div>
+
+        <main class="container">
+
+            <!-- Transaction History -->
+            <div class="card">
+
+                <!-- Transaction Table -->
+                <div class="table-wrapper"
+                     th:if="${transactions != null and !transactions.isEmpty()}">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Counterparty</th>
+                                <th>Amount</th>
+                                <th>Balance After</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:each="tx : ${transactions}">
+
+                                <!-- Date -->
+                                <td>
+
+                                    <span
+                                        th:if="${tx.timestamp != null}"
+                                        th:text="${#temporals.format(tx.timestamp, 'MMM dd, yyyy HH:mm')}">
+                                        Jan 01, 2026 12:00
+                                    </span>
+
+                                    <span
+                                        th:unless="${tx.timestamp != null}">
+                                        —
+                                    </span>
+
+                                </td>
+
+                                <!-- Type -->
+                                <td>
+
+                                    <span
+                                        class="badge"
+                                        th:classappend="${tx.type != null ? 'badge-' + #strings.toLowerCase(tx.type.name()) : ''}"
+                                        th:text="${tx.type != null ? tx.type.name() : 'UNKNOWN'}">
+                                        DEPOSIT
+                                    </span>
+
+                                </td>
+
+                                <!-- Description -->
+                                <td
+                                    th:text="${tx.description != null and !tx.description.isBlank() ? tx.description : '—'}">
+                                    —
+                                </td>
+
+                                <!-- Counterparty -->
+                                <td
+                                    th:text="${tx.counterpartyAccountNumber != null ? tx.counterpartyAccountNumber : '—'}">
+                                    —
+                                </td>
+
+                                <!-- Amount -->
+                                <td>
+
+                                    <!-- MONEY RECEIVED -->
+                                    <span
+                                        th:if="${tx.type != null and (tx.type.name() == 'DEPOSIT' or tx.type.name() == 'TRANSFER_IN')}"
+                                        class="amount-pos"
+                                        th:text="${'+₱' + #numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">
+                                        +₱0.00
+                                    </span>
+
+                                    <!-- MONEY SENT -->
+                                    <span
+                                        th:if="${tx.type != null and (tx.type.name() == 'WITHDRAW' or tx.type.name() == 'TRANSFER_OUT')}"
+                                        class="amount-neg"
+                                        th:text="${'-₱' + #numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">
+                                        -₱0.00
+                                    </span>
+
+                                    <!-- UNKNOWN TRANSACTION -->
+                                    <span
+                                        th:if="${tx.type == null or
+                                            (tx.type.name() != 'DEPOSIT'
+                                            and tx.type.name() != 'TRANSFER_IN'
+                                            and tx.type.name() != 'WITHDRAW'
+                                            and tx.type.name() != 'TRANSFER_OUT')}">
+                                        —
+                                    </span>
+
+                                </td>
+
+                                <!-- Balance After -->
+                                <td>
+
+                                    <span
+                                        th:if="${tx.balanceAfter != null}"
+                                        th:text="${'₱' + #numbers.formatDecimal(tx.balanceAfter, 1, 'COMMA', 2, 'POINT')}">
+                                        ₱0.00
+                                    </span>
+
+                                    <span
+                                        th:unless="${tx.balanceAfter != null}">
+                                        ₱0.00
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- Empty State -->
+                <div
+                    class="empty-state"
+                    th:if="${transactions == null or transactions.isEmpty()}">
+
+                    No transactions yet.
+
+                </div>
+
+                <!-- Back to Dashboard -->
+                <p class="link-alt" style="margin-top: 18px; text-align: left;">
+
+                    <a th:href="@{/dashboard}">
+                        ← Back to Dashboard
+                    </a>
+
+                </p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
