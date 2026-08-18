@@ -14,30 +14,30 @@
 
 <div class="app-shell">
 
-    <!-- =========================
+    <!-- =====================================================
          NAVBAR
-         ========================= -->
+         ===================================================== -->
     <div th:replace="~{fragments/navbar :: navbar('transfer')}"></div>
 
 
     <div class="app-content">
 
-        <!-- =========================
+        <!-- =====================================================
              TOPBAR
-             ========================= -->
+             ===================================================== -->
         <div th:replace="~{fragments/topbar :: topbar('', 'Transfer Money', 'Send money to another bank account.')}"></div>
 
 
-        <!-- =========================
+        <!-- =====================================================
              MAIN CONTENT
-             ========================= -->
+             ===================================================== -->
         <main class="container">
 
             <div class="card">
 
-                <!-- =========================
+                <!-- =================================================
                      SUCCESS MESSAGE
-                     ========================= -->
+                     ================================================= -->
                 <div
                     class="alert alert-success"
                     th:if="${success}"
@@ -46,9 +46,9 @@
                 </div>
 
 
-                <!-- =========================
+                <!-- =================================================
                      ERROR MESSAGE
-                     ========================= -->
+                     ================================================= -->
                 <div
                     class="alert alert-error"
                     th:if="${error}"
@@ -57,26 +57,27 @@
                 </div>
 
 
-                <!-- =========================
+                <!-- =================================================
                      TRANSFER FORM
-                     ========================= -->
+                     ================================================= -->
                 <form
                     th:action="@{/transfer}"
                     method="post"
-                    autocomplete="off">
+                    autocomplete="off"
+                    id="transferForm">
 
-                    <!-- =========================
+                    <!-- =================================================
                          CSRF TOKEN
-                         ========================= -->
+                         ================================================= -->
                     <input
                         type="hidden"
                         th:name="${_csrf.parameterName}"
                         th:value="${_csrf.token}">
 
 
-                    <!-- =========================
-                         DESTINATION ACCOUNT
-                         ========================= -->
+                    <!-- =================================================
+                         DESTINATION ACCOUNT NUMBER
+                         ================================================= -->
                     <div class="form-group">
 
                         <label for="toAccountNumber">
@@ -103,9 +104,9 @@
                     </div>
 
 
-                    <!-- =========================
+                    <!-- =================================================
                          TRANSFER AMOUNT
-                         ========================= -->
+                         ================================================= -->
                     <div class="form-group">
 
                         <label for="amount">
@@ -114,20 +115,24 @@
 
                         <input
                             id="amount"
-                            type="number"
+                            type="text"
                             name="amount"
                             required
-                            min="0.01"
-                            step="0.01"
                             inputmode="decimal"
-                            placeholder="0.00">
+                            autocomplete="off"
+                            placeholder="0.00"
+                            title="Enter a valid amount">
+
+                        <small>
+                            Enter the amount you want to transfer.
+                        </small>
 
                     </div>
 
 
-                    <!-- =========================
+                    <!-- =================================================
                          DESCRIPTION
-                         ========================= -->
+                         ================================================= -->
                     <div class="form-group">
 
                         <label for="description">
@@ -145,21 +150,23 @@
                     </div>
 
 
-                    <!-- =========================
+                    <!-- =================================================
                          SUBMIT BUTTON
-                         ========================= -->
+                         ================================================= -->
                     <button
                         type="submit"
                         class="btn btn-primary btn-block">
+
                         Transfer Money
+
                     </button>
 
                 </form>
 
 
-                <!-- =========================
+                <!-- =================================================
                      BACK TO DASHBOARD
-                     ========================= -->
+                     ================================================= -->
                 <p class="link-alt">
 
                     <a th:href="@{/dashboard}">
@@ -177,24 +184,231 @@
 </div>
 
 
-<!-- =========================
-     ACCOUNT NUMBER VALIDATION
-     ========================= -->
+<!-- =============================================================
+     FORM VALIDATION / FORMATTING
+     ============================================================= -->
 <script>
-    const accountInput = document.getElementById("toAccountNumber");
+
+    /*
+     * =========================================================
+     * ACCOUNT NUMBER
+     * =========================================================
+     */
+
+    const accountInput =
+        document.getElementById("toAccountNumber");
 
     if (accountInput) {
+
         accountInput.addEventListener("input", function () {
 
             // Allow numbers only
-            this.value = this.value.replace(/\D/g, "");
+            this.value =
+                this.value.replace(/\D/g, "");
 
-            // Limit to exactly 10 digits
+            // Maximum 10 digits
             if (this.value.length > 10) {
-                this.value = this.value.slice(0, 10);
+
+                this.value =
+                    this.value.slice(0, 10);
             }
+
         });
+
     }
+
+
+    /*
+     * =========================================================
+     * AMOUNT FORMATTING
+     * =========================================================
+     *
+     * Display:
+     *
+     * 1000       -> 1,000
+     * 45452.23   -> 45,452.23
+     * 1000000.50 -> 1,000,000.50
+     *
+     * The commas are removed before submitting to Spring Boot.
+     */
+
+    const amountInput =
+        document.getElementById("amount");
+
+    if (amountInput) {
+
+        amountInput.addEventListener("input", function () {
+
+            let value =
+                this.value.replace(/,/g, "");
+
+            /*
+             * Allow numbers and decimal point only.
+             */
+            value =
+                value.replace(/[^\d.]/g, "");
+
+
+            /*
+             * Allow only ONE decimal point.
+             */
+            const firstDot =
+                value.indexOf(".");
+
+            if (firstDot !== -1) {
+
+                value =
+                    value.substring(0, firstDot + 1) +
+                    value
+                        .substring(firstDot + 1)
+                        .replace(/\./g, "");
+            }
+
+
+            /*
+             * Separate integer and decimal parts.
+             */
+            let parts =
+                value.split(".");
+
+            let integerPart =
+                parts[0] || "";
+
+            let decimalPart =
+                parts.length > 1
+                    ? parts[1]
+                    : null;
+
+
+            /*
+             * Remove unnecessary leading zeros.
+             *
+             * 00045 -> 45
+             */
+            if (integerPart.length > 1) {
+
+                integerPart =
+                    integerPart.replace(/^0+(?=\d)/, "");
+            }
+
+
+            /*
+             * Add thousands separators.
+             */
+            if (integerPart) {
+
+                integerPart =
+                    Number(integerPart)
+                        .toLocaleString("en-US");
+            }
+
+
+            /*
+             * Maximum 2 decimal places.
+             */
+            if (decimalPart !== null) {
+
+                decimalPart =
+                    decimalPart.substring(0, 2);
+
+                this.value =
+                    integerPart +
+                    "." +
+                    decimalPart;
+
+            } else {
+
+                this.value =
+                    integerPart;
+            }
+
+        });
+
+    }
+
+
+    /*
+     * =========================================================
+     * BEFORE SUBMIT
+     * =========================================================
+     *
+     * Remove commas so Spring Boot receives:
+     *
+     * 45,452.23
+     *
+     * as:
+     *
+     * 45452.23
+     */
+
+    const transferForm =
+        document.getElementById("transferForm");
+
+    if (transferForm) {
+
+        transferForm.addEventListener("submit", function (event) {
+
+            /*
+             * Validate destination account number.
+             */
+            if (
+                accountInput &&
+                !/^\d{10}$/.test(accountInput.value)
+            ) {
+
+                event.preventDefault();
+
+                alert(
+                    "Destination account number must contain exactly 10 digits."
+                );
+
+                accountInput.focus();
+
+                return;
+            }
+
+
+            /*
+             * Clean amount before sending.
+             */
+            if (amountInput) {
+
+                const cleanAmount =
+                    amountInput.value.replace(/,/g, "");
+
+                /*
+                 * Validate amount.
+                 */
+                if (
+                    !cleanAmount ||
+                    isNaN(cleanAmount) ||
+                    Number(cleanAmount) <= 0
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please enter a valid transfer amount."
+                    );
+
+                    amountInput.focus();
+
+                    return;
+                }
+
+
+                /*
+                 * Send clean numeric value
+                 * to Spring Boot.
+                 */
+                amountInput.value =
+                    cleanAmount;
+            }
+
+        });
+
+    }
+
 </script>
 
 </body>
