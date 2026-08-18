@@ -7,15 +7,10 @@ services:
 
     envVars:
       - key: DB_URL
-        value: jdbc:postgresql://dpg-d9ucncnlk1mc73eh88jg-a:5432/banking_db_z7rr
+        sync: false
 
       - key: DB_USERNAME
-        value: banking_user
+        sync: false
 
       - key: DB_PASSWORD
         sync: false
-
-databases:
-  - name: banking-db
-    plan: free
-    region: singapore
